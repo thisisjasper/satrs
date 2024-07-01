@@ -27,8 +27,3 @@ add_executable(satrs src/main.cc)
 
 # Link game target with libraries
 target_link_libraries(satrs PRIVATE externalLibraries satrsLib SDL2::SDL2main)
-
-#target_link_libraries(satrs PUBLIC SDL2::SDL2)
-#target_link_libraries(satrs PUBLIC SDL2::SDL2main)
-#target_link_libraries(satrs PUBLIC spdlog::spdlog)
-# cmake bruh
