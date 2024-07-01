@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
-add_library(satrs_lib STATIC)
-target_include_directories(satrs_lib PUBLIC ".")
-target_sources(satrs_lib PUBLIC
-	GameWindow.cpp
+add_library(satrsLib STATIC)
+target_include_directories(satrsLib PUBLIC ".")
+target_sources(satrsLib PUBLIC
+	"GameWindow.cc"
 )
+target_link_libraries(satrsLib PUBLIC spdlog::spdlog)
+target_link_libraries(satrsLib PUBLIC SDL2::SDL2)
