@@ -10,6 +10,7 @@ project(satrs
 # Find dependencies
 find_package(SDL2 REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(GLEW REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 # Add lib target representing game
@@ -19,8 +20,9 @@ add_subdirectory(src)
 add_library(externalLibraries INTERFACE)
 target_link_libraries(satrsLib PUBLIC externalLibraries)
 
-# Link general dependencies
-target_link_libraries(externalLibraries INTERFACE SDL2::SDL2 spdlog::spdlog)
+## Link general dependencies
+# SDL2, spdlog, glew
+target_link_libraries(externalLibraries INTERFACE SDL2::SDL2 spdlog::spdlog GLEW::glew)
 
 # Create satrs target
 add_executable(satrs src/main.cc)
