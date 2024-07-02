@@ -8,6 +8,7 @@ public:
 	static bool init();
 	static void quit();
 	static void exitWithError(const std::string &message, bool doPopUp);
+	static void swap();
 private:
 };
 

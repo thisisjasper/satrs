@@ -1,6 +1,7 @@
 #include "GameWindow.h"
 
 #include <SDL.h>
+#include <GL/glew.h>
 #include <spdlog/spdlog.h>
 
 #include <iostream>
@@ -15,7 +16,8 @@ namespace {
 
 	bool checkSDLError() {
 		std::string error_message = SDL_GetError();
-		if (!error_message.empty()) {
+		if (!error_message.empty()) 
+		{
 			spdlog::error("SDL2 Error: " + error_message);
 			return true;
 		}
@@ -25,32 +27,57 @@ namespace {
 
 bool GameWindow::init()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) 
+	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		checkSDLError();
 		return false;
+
 	}
-	main_window = SDL_CreateWindow("Soaring Above the Red Seas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
-	if (!main_window) {
-		GameWindow::exitWithError("Failed to create window.", true);
+	
+	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+	main_window = SDL_CreateWindow("Soaring Above the Red Seas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+	if (!main_window) 
+	{
+		exitWithError("Failed to create window.", true);
 	}
 
 	// OpenGL Context Settings
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+	gl_context = SDL_GL_CreateContext(main_window);
+	if (!gl_context) 
+	{
+		exitWithError("Failed to create OpenGL 3.3 context!", true);
+	}
+
+	if (SDL_GL_MakeCurrent(main_window, gl_context)) 
+	{
+		exitWithError("Failed to set OpenGL context!", true);
+	}
 
 	// GlEW
-	
+	glewExperimental = GL_TRUE;
+	GLenum err = glewInit();
+	if (err != GLEW_OK) 
+	{
+		exitWithError("Unable to initialize GLEW!", true);
+	}
 
+	//TODO: Guarantee version minimum 3.3
 	return true;
 }
 
 void GameWindow::quit() 
 {
-	SDL_DestroyWindow(main_window);
-	checkSDLError();
+	SDL_ShowCursor(true);
+	// Delete reverse order of construction
+	if (gl_context)
+		SDL_GL_DeleteContext(gl_context);
+	if(main_window)
+		SDL_DestroyWindow(main_window);
 	SDL_Quit();
 }
 
@@ -80,4 +107,8 @@ void GameWindow::exitWithError(const std::string &message, bool doPopUp)
 	}
 
 	GameWindow::quit();	
+}
+
+void GameWindow::swap() {
+	SDL_GL_SwapWindow(main_window);
 }
