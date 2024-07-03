@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-# Many taken from EndlessSky CMake stuff
+# Some taken from EndlessSky CMake
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

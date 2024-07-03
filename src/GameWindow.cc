@@ -7,7 +7,7 @@
 #include <iostream>
 #include <string>
 
-// Inspired by EndlessSky
+// Some code from EndlessSky
 namespace {
 	SDL_Window* main_window = nullptr;
 	SDL_GLContext gl_context = nullptr;
@@ -32,6 +32,21 @@ bool GameWindow::init()
 		checkSDLError();
 		return false;
 
+	}
+
+	// Info about display
+	SDL_DisplayMode display_mode;
+	if (SDL_GetCurrentDisplayMode(0, &display_mode))
+	{
+		return false;
+	}
+
+	int min_width = 640;
+	int min_height = 320;
+	int max_width = display_mode.w;
+	int max_height = display_mode.h;
+	if (max_width < min_width || max_height < min_height) {
+		exitWithError("Unable to query monitor resolution.", true);
 	}
 	
 	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
@@ -70,6 +85,7 @@ bool GameWindow::init()
 	return true;
 }
 
+// Cleanup
 void GameWindow::quit() 
 {
 	SDL_ShowCursor(true);
@@ -81,6 +97,7 @@ void GameWindow::quit()
 	SDL_Quit();
 }
 
+// Log error message and SDL error, then calls ::quit().
 void GameWindow::exitWithError(const std::string &message, bool doPopUp)
 {
 	spdlog::error(message);
