@@ -38,6 +38,7 @@ bool GameWindow::init()
 	SDL_DisplayMode display_mode;
 	if (SDL_GetCurrentDisplayMode(0, &display_mode))
 	{
+		exitWithError("Unable to query monitor resolution.", true);
 		return false;
 	}
 
@@ -46,14 +47,20 @@ bool GameWindow::init()
 	int max_width = display_mode.w;
 	int max_height = display_mode.h;
 	if (max_width < min_width || max_height < min_height) {
-		exitWithError("Unable to query monitor resolution.", true);
+		exitWithError("Monitor doesn't support minimum 640x320", true);
+		return false;
 	}
+
+	// Set resolution to sligthly smaller than max
+	width = max_width - 100;
+	height = max_height - 100;
 	
 	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
 	main_window = SDL_CreateWindow("Soaring Above the Red Seas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 	if (!main_window) 
 	{
 		exitWithError("Failed to create window.", true);
+		return false;
 	}
 
 	// OpenGL Context Settings
@@ -66,11 +73,13 @@ bool GameWindow::init()
 	if (!gl_context) 
 	{
 		exitWithError("Failed to create OpenGL 3.3 context!", true);
+		return false;
 	}
 
 	if (SDL_GL_MakeCurrent(main_window, gl_context)) 
 	{
 		exitWithError("Failed to set OpenGL context!", true);
+		return false;
 	}
 
 	// GlEW
@@ -79,9 +88,14 @@ bool GameWindow::init()
 	if (err != GLEW_OK) 
 	{
 		exitWithError("Unable to initialize GLEW!", true);
+		return false;
 	}
 
 	//TODO: Guarantee version minimum 3.3
+
+	// GL Stuff
+	glViewport(0, 0, width, height);
+
 	return true;
 }
 

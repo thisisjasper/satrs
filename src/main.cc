@@ -8,7 +8,6 @@
 int main(int argc, char* argv[]) {
 	spdlog::info("You are now playing: Soaring Above the Red Seas");
 	GameWindow::init();
-	glViewport(0, 0, 640, 320);		
 
 	bool quit = false;
 	SDL_Event e;
