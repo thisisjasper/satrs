@@ -32,10 +32,12 @@ GLuint Shader::compile(const char* str, GLenum type)
 		std::string str_type;
 		if (type == GL_VERTEX_SHADER) {
 			str_type = "VERTEX";
-		} else if(type == GL_FRAGMENT_SHADER) {
+		} else if (type == GL_FRAGMENT_SHADER) {
 			str_type = "FRAGMENT";
 		}
-		spdlog::error("SHADER COMPILATION ERROR ({}): \n {}", str_type, message);
+
+		std::string message_str(message.get());
+		spdlog::error("SHADER COMPILATION ERROR ({}): \n {}", str_type, message_str);
 	}
 	return shader_obj;
 }
